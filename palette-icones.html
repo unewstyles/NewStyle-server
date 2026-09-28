@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VELOX — Palette depuis votre icône</title>
+  <style>
+    :root{--bg:#0a0b0f;--surface:#12141c;--surface2:#171a24;--line:rgba(255,255,255,.08);--text:#edeff4;--text2:#9aa0ae;--text3:#5d6470;--gold:#f2b441}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);color:var(--text);font-family:'Space Grotesk','Segoe UI',sans-serif;padding:40px 20px}
+    main{width:min(760px,100%);margin:0 auto}
+    .kicker{font:700 11px 'Space Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+    h1{font-size:30px;text-transform:uppercase;letter-spacing:-.01em}
+    h2{font-size:17px;text-transform:uppercase;letter-spacing:.02em;margin:40px 0 6px}
+    .lead{color:var(--text2);font-size:14px;line-height:1.7;margin:12px 0 26px}
+    .sub{color:var(--text3);font-size:12.5px;line-height:1.6;margin-bottom:14px}
+    .hint{font-size:12px;color:var(--text3);line-height:1.6;margin:10px 0 14px}
+
+    .drop{border:1.5px dashed rgba(242,180,65,.4);border-radius:16px;padding:44px 24px;text-align:center;cursor:pointer;transition:background .2s,border-color .2s}
+    .drop.over,.drop:hover{background:rgba(242,180,65,.06);border-color:var(--gold)}
+    .drop .ic{width:34px;height:34px;color:var(--gold);margin:0 auto 14px}
+    .drop p{font-size:14px;color:var(--text2)}
+    .drop .or{display:block;font:400 11px 'Space Mono',monospace;color:var(--text3);margin:6px 0 12px}
+    .drop .btn{padding:10px 20px;border:none;border-radius:10px;background:var(--gold);color:#0b0c10;font:600 13px 'Space Grotesk',sans-serif;cursor:pointer}
+
+    .preview-row{display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:6px}
+    #preview{width:96px;height:96px;object-fit:contain;border-radius:18px;background:#0e1016}
+    .label{font:700 10.5px 'Space Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+    .swatches{display:flex;gap:8px;flex-wrap:wrap}
+    .sw{width:34px;height:34px;border-radius:9px;border:1px solid rgba(255,255,255,.18);cursor:pointer;transition:transform .15s}
+    .sw:hover{transform:scale(1.14)}
+
+    .rows{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+    .row{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-left:3px solid transparent;border-radius:12px;padding:12px 16px;cursor:pointer;transition:border-color .2s,background .2s}
+    .row.sel{border-left-color:var(--gold);background:var(--surface2)}
+    .row-label{font-size:14px;font-weight:600;flex:1}
+    .row-hex{font:400 12px 'Space Mono',monospace;color:var(--text2)}
+    .row input[type=color]{width:42px;height:32px;border:1px solid var(--line);border-radius:8px;background:none;cursor:pointer;padding:2px}
+
+    .livebar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+    .pill{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;font:600 12px 'Space Grotesk',sans-serif}
+    .pill i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 4px}
+    .abtn{flex:1;min-width:200px;height:48px;border:1px solid rgba(242,180,65,.5);border-radius:12px;background:none;color:var(--gold);font:600 14px 'Space Grotesk',sans-serif;cursor:pointer;transition:background .2s}
+    .abtn:hover,.abtn.ok{background:rgba(242,180,65,.12)}
+    #codeOut{width:100%;min-height:120px;background:var(--surface);border:1px solid var(--line);border-radius:12px;color:var(--text2);font:400 11px 'Space Mono',monospace;padding:14px;margin-top:10px;resize:vertical}
+
+    .icon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+    .card canvas{width:70px;height:70px;border-radius:14px;display:block;margin:0 auto 12px;background:#0e1016}
+    .name{font:400 10.5px 'Space Mono',monospace;color:var(--text2);word-break:break-all;margin-bottom:12px}
+    .dl{padding:9px 12px;border:none;border-radius:9px;background:#e9eaf0;color:#0c0d12;font:600 12px 'Space Grotesk',sans-serif;cursor:pointer}
+    .bg-row{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:12.5px;color:var(--text2)}
+    .bg-row input{width:36px;height:30px;border:1px solid var(--line);border-radius:8px;background:none;cursor:pointer;padding:2px}
+    .all{margin-top:18px;width:100%;height:46px;border:1px solid rgba(242,180,65,.5);border-radius:12px;background:none;color:var(--gold);font:600 13.5px 'Space Grotesk',sans-serif;cursor:pointer}
+    .all:hover{background:rgba(242,180,65,.1)}
+    @media(max-width:600px){.icon-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<main>
+  <p class="kicker">Personnalisation</p>
+  <h1>Palette depuis votre icône</h1>
+  <p class="lead">Déposez l'image de votre icône : les couleurs dominantes sont extraites automatiquement et proposées pour chaque catégorie. Vous validez, vous copiez deux blocs de code, et l'application entière — logos des fichiers, spectre, boutons, badges — s'aligne sur votre identité.</p>
+
+  <div class="drop" id="drop">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    <p>Déposez votre icône ici (PNG, JPG, WebP…)<span class="or">— ou —</span></p>
+    <button class="btn" id="pickBtn" type="button">Choisir un fichier</button>
+    <input type="file" id="file" accept="image/*" hidden />
+  </div>
+
+  <div id="work" hidden>
+
+    <div class="preview-row">
+      <img id="preview" alt="Aperçu de votre icône" />
+      <div style="flex:1;min-width:220px">
+        <p class="label">Couleurs détectées</p>
+        <div class="swatches" id="swatches"></div>
+        <p class="hint">1 — Cliquez sur une ligne ci-dessous pour la sélectionner&nbsp;·&nbsp;2 — Cliquez sur une couleur détectée pour la lui appliquer. Les teintes trop sombres sont automatiquement éclaircies pour rester lisibles sur le fond sombre de l'application.</p>
+      </div>
+    </div>
+
+    <p class="label">Assignation des catégories</p>
+    <div class="rows" id="rows"></div>
+    <div class="livebar" id="livebar"></div>
+
+    <div class="actions">
+      <button class="abtn" id="copyJs" type="button">Copier le code JS (app.js)</button>
+      <button class="abtn" id="copyCss" type="button">Copier le code CSS (style.css)</button>
+    </div>
+    <textarea id="codeOut" readonly placeholder="Le code copié s'affiche ici — vous pouvez aussi le sélectionner manuellement (Ctrl+C) si la copie automatique est bloquée."></textarea>
+
+    <h2>Icônes PWA</h2>
+    <p class="sub">Trois fichiers générés depuis votre image, aux tailles exigées par Android et iPhone. Si votre image n'est pas carrée, elle est centrée automatiquement.</p>
+    <div class="icon-grid" id="iconGrid"></div>
+    <div class="bg-row">
+      <span>Fond de l'icône maskable (zone rognée par Android) :</span>
+      <input type="color" id="maskBg" value="#0a0b0f" />
+    </div>
+    <button class="all" id="all" type="button">Tout télécharger</button>
+
+  </div>
+</main>
+
+<script>
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+/* ---------- Mathématiques couleur ---------- */
+function hexToRgb(hex){ const n = parseInt(hex.slice(1), 16); return [(n>>16)&255, (n>>8)&255, n&255]; }
+function rgbToHex(r, g, b){ return "#" + [r, g, b].map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, "0")).join(""); }
+function rgbToHsl(r, g, b){
+  r/=255; g/=255; b/=255;
+  const mx = Math.max(r,g,b), mn = Math.min(r,g,b), l = (mx+mn)/2;
+  let h = 0, s = 0;
+  if(mx !== mn){
+    const d = mx - mn;
+    s = l > .5 ? d/(2-mx-mn) : d/(mx+mn);
+    if(mx === r) h = (g-b)/d + (g < b ? 6 : 0);
+    else if(mx === g) h = (b-r)/d + 2;
+    else h = (r-g)/d + 4;
+    h *= 60;
+  }
+  return [h, s, l];
+}
+function hslToRgb(h, s, l){
+  h /= 360; let r, g, b;
+  if(s === 0){ r = g = b = l; }
+  else {
+    const q = l < .5 ? l*(1+s) : l+s-l*s, p = 2*l-q;
+    const f = t => { if(t<0)t+=1; if(t>1)t-=1; if(t<1/6)return p+(q-p)*6*t; if(t<.5)return q; if(t<2/3)return p+(q-p)*(2/3-t)*6; return p; };
+    r = f(h+1/3); g = f(h); b = f(h-1/3);
+  }
+  return [Math.round(r*255), Math.round(g*255), Math.round(b*255)];
+}
+function hueDist(a, b){ const d = Math.abs(a-b); return Math.min(d, 360-d); }
+function rgba(hex, a){ const [r,g,b] = hexToRgb(hex); return `rgba(${r},${g},${b},${a})`; }
+
+/* Éclaircit les teintes trop sombres pour rester lisibles sur fond sombre */
+function lighten(hex){
+  let [r, g, b] = hexToRgb(hex);
+  let [h, s, l] = rgbToHsl(r, g, b);
+  if(l < .55) l = .58;
+  if(s < .2)  s = Math.min(1, s + .15);
+  return rgbToHex(...hslToRgb(h, s, l));
+}
+
+/* ---------- Données ---------- */
+const ROWS = [
+  { key:"video", label:"Vidéos" },
+  { key:"image", label:"Images" },
+  { key:"pdf",   label:"PDF" },
+  { key:"apk",   label:"APK" },
+  { key:"gold",  label:"APK Pro — sert aussi d'accent de marque (boutons, badge PRO, surbrillances)" },
+];
+const HUE_REF = { video:262, image:210, pdf:357, apk:138, gold:42 }; /* teintes des catégories actuelles */
+let picked   = { video:"#9d6bff", image:"#4da3ff", pdf:"#ff4d5e", apk:"#3ddc84", gold:"#f2b441" };
+let palette = [], img = null, selected = "video", canvases = [];
+
+/* ---------- Extraction de la palette ---------- */
+function extractPalette(){
+  const S = 96, c = document.createElement("canvas");
+  c.width = c.height = S;
+  const x = c.getContext("2d", { willReadFrequently: true });
+  x.drawImage(img, 0, 0, S, S);
+  const d = x.getImageData(0, 0, S, S).data, map = new Map();
+
+  for(let i = 0; i < d.length; i += 4){
+    if(d[i+3] < 120) continue;                                   /* pixels transparents ignorés */
+    const k = (d[i]>>4) + "-" + (d[i+1]>>4) + "-" + (d[i+2]>>4); /* regroupement par teinte */
+    const b = map.get(k) || { r:0, g:0, b:0, n:0 };
+    b.r += d[i]; b.g += d[i+1]; b.b += d[i+2]; b.n++;
+    map.set(k, b);
+  }
+
+  const cols = [...map.values()]
+    .map(b => {
+      const r = Math.round(b.r/b.n), g = Math.round(b.g/b.n), bl = Math.round(b.b/b.n);
+      const [h, s, l] = rgbToHsl(r, g, bl);
+      return { r, g, bl, h, s, l, n: b.n, hex: rgbToHex(r, g, bl) };
+    })
+    .filter(c => !(c.s < .12 && (c.l < .1 || c.l > .93)))         /* noir et blanc purs écartés */
+    .sort((a, b) => b.n - a.n);                                   /* par fréquence décroissante */
+
+  const out = [];
+  for(const c of cols){
+    if(out.every(o => Math.hypot(o.r-c.r, o.g-c.g, o.bl-c.bl) > 50)) out.push(c);
+    if(out.length >= 8) break;
+  }
+  return out;
+}
+
+/* ---------- Assignation automatique ---------- */
+function autoAssign(){
+  if(!palette.length) return;
+  const used = new Set();
+
+  /* 1) Couleur « premium » : teinte chaude (jaune / orange) si l'icône en contient une */
+  const warm = palette
+    .filter(c => c.h >= 15 && c.h <= 75 && c.s >= .25)
+    .sort((a, b) => hueDist(a.h, 42) - hueDist(b.h, 42))[0];
+  if(warm){ picked.gold = lighten(warm.hex); used.add(warm); }
+
+  /* 2) Autres catégories : couleur à la teinte la plus proche, encore libre */
+  for(const key of ["video", "image", "pdf", "apk"]){
+    let best = null, dist = 1e9;
+    for(const c of palette){
+      if(used.has(c)) continue;
+      const hd = hueDist(c.h, HUE_REF[key]);
+      if(hd < dist){ dist = hd; best = c; }
+    }
+    if(best && dist <= 70){ picked[key] = lighten(best.hex); used.add(best); }
+  }
+}
+
+/* ---------- Rendus ---------- */
+function renderSwatches(){
+  $("#swatches").innerHTML = palette.length
+    ? palette.map(c => `<button class="sw" type="button" data-hex="${c.hex}" style="background:${c.hex}" title="${c.hex}"></button>`).join("")
+    : `<span class="hint">Aucune couleur franche détectée — choisissez les teintes manuellement avec les sélecteurs de droite.</span>`;
+}
+function renderRows(){
+  $("#rows").innerHTML = ROWS.map(r => `
+    <div class="row ${selected === r.key ? "sel" : ""}" data-key="${r.key}">
+      <span class="row-label">${r.label}</span>
+      <span class="row-hex">${picked[r.key].toUpperCase()}</span>
+      <input type="color" value="${picked[r.key]}" data-input="${r.key}" />
+    </div>`).join("");
+}
+function markSelected(){
+  $$("#rows .row").forEach(r => r.classList.toggle("sel", r.dataset.key === selected));
+}
+function renderLive(){
+  const short = { video:"Vidéos", image:"Images", pdf:"PDF", apk:"APK", gold:"APK Pro" };
+  $("#livebar").innerHTML = ROWS.map(r => {
+    const c = picked[r.key];
+    return `<span class="pill" style="color:${c};border:1px solid ${rgba(c, .4)};background:${rgba(c, .09)}"><i style="background:${c}"></i>${short[r.key]}</span>`;
+  }).join("");
+}
+
+/* ---------- Icônes PWA depuis votre image ---------- */
+const ICONS_OUT = [
+  { file:"icon-192.png",      size:192, maskable:false },
+  { file:"icon-512.png",      size:512, maskable:false },
+  { file:"icon-maskable.png", size:512, maskable:true  },
+];
+function makeIcon(size, maskable){
+  const c = document.createElement("canvas");
+  c.width = c.height = size;
+  const x = c.getContext("2d");
+  x.imageSmoothingEnabled = true;
+  x.imageSmoothingQuality = "high";
+  if(maskable){ x.fillStyle = $("#maskBg").value; x.fillRect(0, 0, size, size); }
+  const max = (maskable ? .76 : .96) * size;              /* 76 % = zone de sécurité maskable */
+  const r = Math.min(max / img.width, max / img.height);
+  x.drawImage(img, (size - img.width*r)/2, (size - img.height*r)/2, img.width*r, img.height*r);
+  return c;
+}
+function renderIcons(){
+  const grid = $("#iconGrid");
+  grid.innerHTML = ""; canvases = [];
+  ICONS_OUT.forEach(p => {
+    const cv = makeIcon(p.size, p.maskable);
+    canvases.push(cv);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.appendChild(cv);
+    card.insertAdjacentHTML("beforeend", `<p class="name">${p.file}</p>`);
+    const b = document.createElement("button");
+    b.className = "dl"; b.type = "button"; b.textContent = "Télécharger";
+    b.addEventListener("click", () => exportPNG(cv, p.file));
+    card.appendChild(b);
+    grid.appendChild(card);
+  });
+}
+function exportPNG(cv, name){
+  cv.toBlob(blob => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  }, "image/png");
+}
+
+/* ---------- Génération du code ---------- */
+function genJs(){
+  return `/* ============================================================
+   CATÉGORIES — couleurs alignées sur votre icône
+   À coller À LA PLACE de l'ancien bloc CATS (section 1 de app.js)
+   ============================================================ */
+const CATS = {
+  video : { label: "Vidéos",  color: "${picked.video}", icon: "film"  },
+  image : { label: "Images",  color: "${picked.image}", icon: "image" },
+  pdf   : { label: "PDF",     color: "${picked.pdf}",   icon: "file"  },
+  apk   : { label: "APK",     color: "${picked.apk}",   icon: "phone" },
+  apkpro: { label: "APK Pro", color: "${picked.gold}",  icon: "star"  },
+};`;
+}
+function genCss(){
+  const g = picked.gold;
+  return `/* ============================================================
+   Palette VELOX — générée depuis votre icône
+   À COLLER À LA FIN de style.css (elle survole l'ancien thème)
+   ============================================================ */
+:root{
+  --gold:${g};              /* accent de marque + APK Pro */
+  --violet:${picked.video}; /* Vidéos (pastilles du pied de page) */
+  --blue:${picked.image};   /* Images */
+  --red:${picked.pdf};      /* PDF */
+  --green:${picked.apk};    /* APK */
+}
+.announce{background:${rgba(g, .07)};border-bottom:1px solid ${rgba(g, .16)}}
+.announce:hover{background:${rgba(g, .13)}}
+.brand-mark{background:${rgba(g, .1)};border:1px solid ${rgba(g, .45)}}
+.brand:hover .brand-mark{background:${rgba(g, .2)}}
+.search-box:focus-within{border-color:${rgba(g, .55)}}
+.sort-btn.active{background:${rgba(g, .09)}}
+.icon-btn:hover{border-color:${rgba(g, .5)}}
+.dl-badge:hover{border-color:${rgba(g, .5)}}
+.sec-idx{border:1px solid ${rgba(g, .35)}}`;
+}
+function copyCode(code, btn){
+  $("#codeOut").value = code;
+  const ok = () => {
+    btn.textContent = "Copié ✓"; btn.classList.add("ok");
+    setTimeout(() => { btn.textContent = btn.dataset.t; btn.classList.remove("ok"); }, 1600);
+  };
+  const fb = () => { $("#codeOut").select(); }; /* copie manuelle si l'API est bloquée */
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(ok).catch(fb);
+  else fb();
+}
+
+/* ---------- Chargement de l'image ---------- */
+function loadFile(f){
+  const rd = new FileReader();
+  rd.onload = () => {
+    const im = new Image();
+    im.onload = () => { img = im; setup(); };
+    im.onerror = () => {
+      $("#codeOut").value = "Format d'image non pris en charge par votre navigateur — utilisez un PNG ou un JPG.";
+      $("#codeOut").closest("main").scrollIntoView();
+    };
+    im.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+}
+function setup(){
+  $("#work").hidden = false;
+  $("#preview").src = img.src;
+  palette = extractPalette();
+  autoAssign();
+  selected = "video";
+  renderSwatches(); renderRows(); renderLive(); renderIcons();
+  $("#work").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ---------- Événements ---------- */
+const drop = $("#drop");
+["dragover", "dragenter"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "dragend"].forEach(ev => drop.addEventListener(ev, () => drop.classList.remove("over")));
+drop.addEventListener("drop", e => {
+  e.preventDefault(); drop.classList.remove("over");
+  const f = e.dataTransfer.files[0];
+  if(f && f.type.startsWith("image/")) loadFile(f);
+});
+drop.addEventListener("click", e => { if(e.target.tagName !== "BUTTON") $("#file").click(); });
+ $("#pickBtn").addEventListener("click", () => $("#file").click());
+ $("#file").addEventListener("change", e => { if(e.target.files[0]) loadFile(e.target.files[0]); });
+
+ $("#swatches").addEventListener("click", e => {
+  const sw = e.target.closest(".sw");
+  if(!sw) return;
+  picked[selected] = lighten(sw.dataset.hex);
+  renderRows(); renderLive();
+});
+ $("#rows").addEventListener("click", e => {
+  const row = e.target.closest(".row");
+  if(!row) return;
+  selected = row.dataset.key;
+  markSelected();
+});
+ $("#rows").addEventListener("input", e => {
+  const key = e.target.dataset.input;
+  if(!key) return;
+  picked[key] = e.target.value;
+  selected = key;
+  e.target.closest(".row").querySelector(".row-hex").textContent = e.target.value.toUpperCase();
+  markSelected(); renderLive();
+});
+ $("#maskBg").addEventListener("input", renderIcons);
+
+[["#copyJs", genJs], ["#copyCss", genCss]].forEach(([sel, gen]) => {
+  const b = $(sel);
+  b.dataset.t = b.textContent;
+  b.addEventListener("click", () => copyCode(gen(), b));
+});
+ $("#all").addEventListener("click", () => {
+  ICONS_OUT.forEach((p, i) => setTimeout(() => exportPNG(canvases[i], p.file), i * 450));
+});
+</script>
+</body>
+</html>

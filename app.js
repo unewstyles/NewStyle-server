@@ -10,6 +10,7 @@
      6) Téléchargement (progression + compteur persistant)
      7) Panneau de détails, notifications
      8) Initialisation & interactions
+     9) PWA — enregistrement du Service Worker
    ============================================================================ */
 
 /* ============================================================================
@@ -674,3 +675,16 @@ function init(){
 }
 
 init();
+
+/* ============================================================================
+   9) PWA — enregistrement du Service Worker
+   Ignoré en local (file://) car un SW exige http/https ;
+   actif automatiquement dès que le site est en ligne (GitHub Pages, Netlify…).
+   ============================================================================ */
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {
+      /* échec silencieux : l'application fonctionne quand même */
+    });
+  });
+}
