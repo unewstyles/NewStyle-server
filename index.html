@@ -1,19 +1,203 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07111f"><title>NewStyle Downloads</title><link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="NewStyle Downloads — catalogue de fichiers vérifiés : vidéos, images, applications, documents, archives et audio, hébergés sur MediaFire et MEGA.">
+  <meta property="og:title" content="NewStyle Downloads">
+  <meta property="og:description" content="Vidéos, images, applications, documents et archives — liens vérifiés, téléchargement direct.">
+  <meta property="og:type" content="website">
+  <title>NewStyle Downloads — Centre de téléchargement</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23f6b73c'/><path d='M12 5v9m-4-3 4 4 4-4' stroke='%23221604' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/><path d='M6 20h12' stroke='%23221604' stroke-width='2.2' stroke-linecap='round'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar"><a class="brand" href="#"><b>☁️ NewStyle</b><strong>Downloads</strong><small>Vos fichiers, notre priorité</small></a><button id="menu">☰</button></header>
-<nav id="nav"><a href="#home">Accueil</a><a href="#categories">Catégories</a><a href="#files">Fichiers</a><a href="#about">À propos</a></nav>
-<main id="home">
-<section class="hero"><span class="eyebrow">CENTRE DE TÉLÉCHARGEMENT</span><h1>Téléchargez vos fichiers<br><em>en toute simplicité.</em></h1><p>Vidéos, images, APK, PDF, archives et autres fichiers au même endroit.</p>
-<div class="search"><span>⌕</span><input id="search" maxlength="100" placeholder="Rechercher un fichier..."><button id="go">Rechercher</button></div>
-<div class="trust"><span>🛡️ Liens vérifiés</span><span>⚡ Rapide</span><span>☁️ MediaFire & MEGA</span></div></section>
-<section id="categories" class="section"><div class="head"><h2>Catégories</h2><button id="reset">Réinitialiser</button></div><div id="cats" class="cats"></div></section>
-<section id="files" class="section"><div class="head"><h2>Fichiers disponibles</h2><span id="count"></span></div><div id="grid" class="grid"></div><div id="empty" class="empty hidden">🔎<h3>Aucun fichier trouvé</h3><p>Essaie un autre mot-clé ou une autre catégorie.</p></div></section>
-<section id="about" class="about"><h2>À propos</h2><p>Les fichiers sont hébergés sur MediaFire ou MEGA. Cette application gère uniquement le catalogue et les liens de téléchargement.</p></section>
-</main><footer>NewStyle Downloads · © 2026</footer>
-<script src="app.js" defer></script>
-</body></html>
+
+  <a class="skip" href="#main">Aller au contenu principal</a>
+
+  <!-- ================= En-tête ================= -->
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#accueil" aria-label="NewStyle Downloads — accueil">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 4v12"/><path d="m6 11 6 6 6-6"/><path d="M4 21h16"/>
+        </svg>
+      </span>
+      <span class="brand__text"><b>NewStyle</b><small>Downloads</small></span>
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Navigation principale">
+      <a class="nav__link is-active" href="#accueil">Accueil</a>
+      <a class="nav__link" href="#categories">Catégories</a>
+      <a class="nav__link" href="#fichiers">Fichiers</a>
+      <a class="nav__link" href="#apropos">À propos</a>
+    </nav>
+
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Ouvrir le menu">
+      <span class="menu-btn__bar"></span>
+      <span class="menu-btn__bar"></span>
+      <span class="menu-btn__bar"></span>
+    </button>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <!-- ================= Hero ================= -->
+    <section class="hero" id="accueil">
+      <div class="hero__inner">
+        <div class="hero__content">
+          <p class="eyebrow"><span class="eyebrow__dot"></span>Centre de téléchargement</p>
+          <h1 class="hero__title">Téléchargez vos fichiers <em>en toute simplicité.</em></h1>
+          <p class="hero__lead">Vidéos, images, applications, documents, archives et audio — un catalogue clair, des liens vérifiés, aucun détour.</p>
+
+          <form class="search" id="searchForm" role="search" autocomplete="off">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="searchInput" type="search" maxlength="100" placeholder="Rechercher un fichier, une catégorie…" aria-label="Rechercher un fichier">
+            <kbd>/</kbd>
+            <button class="search__btn" type="submit">Rechercher</button>
+          </form>
+
+          <ul class="trust">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Liens vérifiés</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <span>Téléchargement direct</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+              <span>MediaFire &amp; MEGA</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="hero__visual" aria-hidden="true">
+          <div class="dl-card" id="dlCard">
+            <div class="dl-card__head">
+              <span class="dl-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
+              </span>
+              <div class="dl-card__meta">
+                <strong id="dlName">Chargement…</strong>
+                <span id="dlMeta">— · —</span>
+              </div>
+              <span class="dl-card__badge" id="dlBadge">en cours</span>
+            </div>
+            <div class="dl-card__bar"><span class="dl-card__progress" id="dlBar"></span></div>
+            <div class="dl-card__foot">
+              <span id="dlSpeed">0 Mo/s</span>
+              <span id="dlPct">0 %</span>
+            </div>
+          </div>
+          <span class="chip chip--accent">MP4</span>
+          <span class="chip">APK</span>
+          <span class="chip">PDF</span>
+          <span class="chip">FLAC</span>
+        </div>
+      </div>
+
+      <div class="hero__stats">
+        <div><strong data-stat="files">0</strong><span>fichiers répertoriés</span></div>
+        <div><strong data-stat="cats">0</strong><span>catégories</span></div>
+        <div><strong data-stat="hosts">0</strong><span>hébergeurs</span></div>
+      </div>
+    </section>
+
+    <!-- ================= Catégories ================= -->
+    <section class="section" id="categories">
+      <div class="section__head reveal">
+        <h2 class="section__title">Catégories</h2>
+        <button class="btn btn--ghost" id="resetBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          <span>Réinitialiser</span>
+        </button>
+      </div>
+      <div class="cats reveal" id="cats" role="group" aria-label="Filtrer par catégorie"></div>
+    </section>
+
+    <!-- ================= Fichiers ================= -->
+    <section class="section" id="fichiers">
+      <div class="section__head reveal">
+        <h2 class="section__title">Fichiers disponibles</h2>
+        <p class="count" id="count" aria-live="polite"></p>
+      </div>
+
+      <div class="toolbar reveal">
+        <div class="view-toggle" id="viewToggle" role="group" aria-label="Mode d'affichage">
+          <button type="button" data-view="grid" class="is-active" aria-label="Vue grille">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          </button>
+          <button type="button" data-view="list" aria-label="Vue liste">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
+          </button>
+        </div>
+        <label class="sort">
+          <span>Trier par</span>
+          <select id="sortSelect" aria-label="Trier les fichiers">
+            <option value="recent">Plus récents</option>
+            <option value="name">Nom (A–Z)</option>
+            <option value="size">Poids</option>
+            <option value="downloads">Populaires</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid" id="grid"></div>
+
+      <div class="empty hidden" id="empty">
+        <div class="empty__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <h3>Aucun fichier trouvé</h3>
+        <p>Essayez un autre mot-clé ou choisissez une autre catégorie.</p>
+        <button class="btn" id="emptyReset" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          <span>Réinitialiser les filtres</span>
+        </button>
+      </div>
+
+      <noscript>
+        <div class="empty" style="margin-top:18px">
+          <h3>JavaScript est désactivé</h3>
+          <p>Activez JavaScript pour parcourir et filtrer le catalogue de fichiers.</p>
+        </div>
+      </noscript>
+    </section>
+
+    <!-- ================= À propos ================= -->
+    <section class="section about" id="apropos">
+      <div class="section__head reveal">
+        <h2 class="section__title">À propos</h2>
+      </div>
+      <p class="about__text reveal">NewStyle Downloads est un catalogue indépendant : aucun fichier n'est stocké ici. Chaque entrée renvoie vers son lien officiel sur <strong>MediaFire</strong> ou <strong>MEGA</strong>, vérifié avant publication, pour des téléchargements rapides et fiables.</p>
+      <div class="about__hosts reveal">
+        <div class="host">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+          <div><strong>MediaFire</strong><p>Hébergement stable et liens directs, sans inscription.</p></div>
+        </div>
+        <div class="host">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div><strong>MEGA</strong><p>Transferts chiffrés de bout en bout, quotas généreux.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>NewStyle Downloads · © 2026</span>
+    <span class="footer__note">Catalogue indépendant — fichiers hébergés sur MediaFire &amp; MEGA</span>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
