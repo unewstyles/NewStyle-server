@@ -43,9 +43,9 @@ const CATS = {
      tag       : (optionnel) petit badge libre, ex : "4K", "EXCLU"
    ============================================================================ */
 const FILES = [
-  { id:"vid-01", type:"video", title:"Masterclass — Montage vidéo cinématique",
-    desc:"Formation complète de 2 h 30 : étalonnage, sound design et narration visuelle.",
-    sizeBytes:771751936, url:"media/masterclass-montage.mp4", date:"2025-11-28", downloads:3182 },
+  { id:"vid-01", type:"video", title:"AMEGANVI — Montage vidéo cinématique",
+    desc:"Formation complète de 44:39 : étalonnage, sound design et narration visuelle.",
+    sizeBytes:771751936, url:"https://ia601805.us.archive.org/21/items/ameganvi-zihoue/AMEGANVI%20Zihoué.mp4", date:"2026-09-28", downloads:3182 },
 
   { id:"vid-02", type:"video", title:"Pack d'effets — 45 transitions 4K",
     desc:"Transitions 4K prêtes à l'emploi pour Premiere Pro et DaVinci Resolve.",
